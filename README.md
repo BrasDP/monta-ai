@@ -8,6 +8,8 @@ Prof. Vinicius Marques da Silva Ferreira.
 **Integrantes:** Lucas Pires da Costa (1250122691), Ruan da Silva Marques (1250124415) e
 Lucas Santos Garcia (1250117441).
 
+**Protótipo de telas:** https://brasdp.github.io/monta-ai/prototipo/
+
 O Monta Aí ajuda quem vai comprar ou montar um computador sem entender de hardware.
 O usuário informa o orçamento, o formato (desktop ou notebook), para que vai usar,
 a resolução do monitor, se faz lives e se pretende fazer upgrade. O sistema então:
@@ -101,8 +103,10 @@ Os fontes estão em `docs/diagramas/` (Mermaid e SVG).
 
 ## Protótipo de telas
 
-O protótipo navegável está em [`prototipo/index.html`](prototipo/index.html). Com o GitHub Pages
-ativado, ele abre direto no navegador.
+**Abrir o protótipo:** https://brasdp.github.io/monta-ai/prototipo/
+
+Clique nos botões para navegar entre as telas. O código do protótipo está em
+[`prototipo/index.html`](prototipo/index.html).
 
 ![Tela de resultado](docs/img/prototipo_5.png)
 
