@@ -105,7 +105,8 @@ Os fontes estão em `docs/diagramas/` (Mermaid e SVG).
 
 **Abrir o protótipo:** https://brasdp.github.io/monta-ai/prototipo/
 
-Clique nos botões para navegar entre as telas. O código do protótipo está em
+O protótipo roda no navegador o mesmo código Python do sistema (via [Pyodide](https://pyodide.org)),
+então cada combinação de respostas gera a sua própria recomendação. O código do protótipo está em
 [`prototipo/index.html`](prototipo/index.html).
 
 ![Tela de resultado](docs/img/prototipo_5.png)
