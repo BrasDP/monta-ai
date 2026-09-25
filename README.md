@@ -37,7 +37,7 @@ python -m unittest   # testes automatizados
 ```
 monta_ai/
 ├── motor.py              Motor de inferência (encadeamento para frente) e módulo de explicação
-├── base_conhecimento.py  Base de conhecimento: 54 regras SE ... ENTÃO ...
+├── base_conhecimento.py  Base de conhecimento: 56 regras SE ... ENTÃO ...
 ├── catalogo.py           Perguntas ao usuário e descrição dos níveis de cada peça
 └── sistema.py            Liga tudo e formata os resultados e as explicações
 app.py                    Interface gráfica
@@ -77,6 +77,7 @@ docs/                     Diagramas, imagens e relatório em PDF
 | R41–R43 | Distribuição do orçamento | jogos → 40% do dinheiro na placa de vídeo |
 | R44–R53 | Alertas | placa de vídeo necessária acima do teto → alerta de orçamento |
 | R54 | Objetivo | todas as peças definidas → recomendação completa |
+| R55–R56 | Economia no orçamento baixo | perfil básico + orçamento baixo → 8 GB (vence a R11 pela prioridade) |
 
 ### Exemplo de encadeamento
 

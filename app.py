@@ -6,6 +6,7 @@ Uso:  python app.py
 import tkinter as tk
 from tkinter import font as tkfont
 
+from monta_ai.base_conhecimento import REGRAS
 from monta_ai.catalogo import formatar_valor
 from monta_ai.sistema import perguntas_aplicaveis, recomendar
 
@@ -74,7 +75,7 @@ class App(tk.Tk):
         self.respostas, self.historico = {}, []
         self.cabecalho(pai, "Descubra o computador ideal para você",
                        "Responda algumas perguntas rápidas. O sistema especialista analisa "
-                       "suas respostas com 54 regras e indica a configuração, os alertas e "
+                       f"suas respostas com {len(REGRAS)} regras e indica a configuração, os alertas e "
                        "o porquê de cada escolha.")
         caixa = tk.Frame(pai, bg=CARTAO, highlightthickness=1, highlightbackground=BORDA)
         caixa.pack(fill="x", pady=24)

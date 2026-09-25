@@ -300,4 +300,19 @@ REGRAS = [
           [("gpu_rec", "!=", None), ("cpu_rec", "!=", None),
            ("ram_rec", "!=", None), ("armaz_rec", "!=", None)],
           [("recomendacao", "completa")], prioridade=-10),
+
+    # ------------------------------------------------------------------
+    # Grupo 11: economia no orçamento baixo. A R55 tem prioridade maior que
+    # a R11, então vence o conflito e define a memória antes dela.
+    # ------------------------------------------------------------------
+    Regra("R55", "Economia no orçamento baixo",
+          "Perfil básico com orçamento baixo: 8 GB de memória bastam para estudo e escritório.",
+          [("perfil", "==", "basico"), ("faixa_orcamento", "==", 1)],
+          [("ram_req", 1)], prioridade=5),
+    Regra("R56", "Economia no orçamento baixo",
+          "Com 8 GB, recomenda deixar espaço para ampliar a memória depois.",
+          [("ram_rec", "==", 1)],
+          [(ALERTAS, "8 GB atendem estudo, escritório e navegação, mas ficam no limite com muitas "
+                     "abas abertas. Se possível, escolha um modelo com slot de memória livre para "
+                     "chegar a 16 GB depois.")]),
 ]

@@ -63,6 +63,16 @@ class TestBaseConhecimento(unittest.TestCase):
         self.assertEqual(r.distribuicao_em_reais(), [])
         self.assertTrue(any("notebooks" in a.lower() for a in r.alertas))
 
+    def test_basico_com_orcamento_baixo_recomenda_8gb(self):
+        basico = dict(formato="desktop", uso="escritorio", resolucao="1080p",
+                      streaming="nao", upgrade="nao")
+        r = recomendar(dict(basico, orcamento=2000))
+        self.assertEqual(r.fatos["ram_rec"], 1)  # R55 vence a R11 pela prioridade
+        self.assertEqual(r.motor.origem("ram_req").regra.id, "R55")
+        self.assertTrue(any("8 GB" in a for a in r.alertas))
+        # Com orçamento médio, volta a valer a regra padrão (16 GB).
+        self.assertEqual(recomendar(dict(basico, orcamento=4000)).fatos["ram_rec"], 2)
+
     def test_ia_exige_nvidia(self):
         r = recomendar(dict(orcamento=9000, formato="desktop", uso="ia_dados",
                             resolucao="1080p", streaming="nao", upgrade="nao"))
