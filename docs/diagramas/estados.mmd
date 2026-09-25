@@ -1,0 +1,42 @@
+stateDiagram-v2
+    direction LR
+    state "Tela inicial" as TelaInicial
+    state "Orçamento" as Orcamento
+    state "Formato" as Formato
+    state "Uso principal" as Uso
+    state "Tipo de jogo" as TipoDeJogo
+    state "Resolução" as Resolucao
+    state "Lives" as Lives
+    state "Upgrade" as Upgrade
+    state "Avaliando regras" as AvaliandoRegras
+    state "Disparando regra" as DisparandoRegra
+    state "Resultado exibido" as ResultadoExibido
+    state "Exibindo explicação" as ExibindoExplicacao
+    [*] --> TelaInicial
+    TelaInicial --> Questionario : clicar em Começar
+    state "Questionário" as Questionario {
+        direction TB
+        [*] --> Orcamento
+        Orcamento --> Formato : responder
+        Formato --> Uso : responder
+        Uso --> TipoDeJogo : uso = jogos
+        Uso --> Resolucao : outro uso
+        TipoDeJogo --> Resolucao : responder
+        Resolucao --> Lives : responder
+        Lives --> Upgrade : responder
+        Upgrade --> [*] : responder
+    }
+    Questionario --> TelaInicial : Voltar na 1ª pergunta
+    Questionario --> Inferindo : última resposta
+    state "Inferindo (motor de inferência)" as Inferindo {
+        direction TB
+        [*] --> AvaliandoRegras
+        AvaliandoRegras --> DisparandoRegra : há regra aplicável
+        DisparandoRegra --> AvaliandoRegras : fatos atualizados
+        AvaliandoRegras --> [*] : nenhuma regra aplicável
+    }
+    Inferindo --> ResultadoExibido
+    ResultadoExibido --> ExibindoExplicacao : clicar em Por quê? ou Ver regras
+    ExibindoExplicacao --> ResultadoExibido : fechar
+    ResultadoExibido --> TelaInicial : Nova consulta
+    ResultadoExibido --> [*] : fechar o programa

@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Monta Aí: protótipo de telas</title>
+<style>
+  :root {
+    --fundo: #F4F6FB; --cartao: #FFFFFF; --primaria: #4F46E5; --primaria-escura: #3730A3;
+    --primaria-clara: #EEF2FF; --texto: #1F2937; --suave: #6B7280; --borda: #E5E7EB;
+    --alerta-fundo: #FEF3C7; --alerta-texto: #92400E;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--fundo); color: var(--texto);
+         font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif; }
+  .janela { max-width: 760px; margin: 0 auto; padding: 28px 32px 40px; min-height: 100vh; }
+  .marca { color: var(--primaria); font-weight: 700; letter-spacing: .5px; font-size: 14px; }
+  h1 { font-size: 26px; margin: 10px 0 4px; line-height: 1.25; }
+  .sub { color: var(--suave); margin: 0 0 18px; line-height: 1.5; }
+  .tela { display: none; }
+  .tela.ativa { display: block; }
+  .botao { display: inline-block; border: 1px solid var(--primaria); background: var(--primaria);
+           color: #fff; font-weight: 700; padding: 10px 20px; cursor: pointer; font: inherit;
+           font-weight: 700; border-radius: 6px; }
+  .botao:hover { background: var(--primaria-escura); }
+  .botao.sec { background: #fff; color: var(--primaria); }
+  .botao.sec:hover { background: var(--primaria-clara); }
+  .linha-botoes { display: flex; justify-content: space-between; margin-top: 22px; gap: 12px; }
+  .cartao { background: var(--cartao); border: 1px solid var(--borda); border-radius: 8px; }
+  .lista-intro { padding: 8px 18px; margin: 22px 0; }
+  .lista-intro div { padding: 8px 0; font-size: 16px; }
+  .progresso { height: 6px; background: var(--borda); border-radius: 3px; margin: 10px 0 20px; }
+  .progresso span { display: block; height: 100%; background: var(--primaria); border-radius: 3px; }
+  .opcao { display: block; width: 100%; text-align: left; padding: 14px 16px; margin: 8px 0;
+           font: inherit; font-size: 16px; background: #fff; border: 1px solid var(--borda);
+           border-radius: 8px; cursor: pointer; color: var(--texto); }
+  .opcao:hover { border-color: var(--primaria); }
+  .opcao.sel { background: var(--primaria-clara); border-color: var(--primaria); font-weight: 600; }
+  .campo { display: flex; align-items: center; padding: 6px 16px; }
+  .campo span { color: var(--suave); font-size: 20px; margin-right: 8px; }
+  .campo input { border: 0; font: inherit; font-size: 24px; padding: 10px 0; width: 100%; outline: none; }
+  .dica { color: var(--suave); font-size: 13px; margin-top: 8px; }
+  .grade { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media (max-width: 560px) { .grade { grid-template-columns: 1fr; } .janela { padding: 20px 16px; } }
+  .peca { padding: 12px 14px; }
+  .peca small { color: var(--suave); font-weight: 700; font-size: 11px; letter-spacing: .6px; }
+  .peca b { display: block; margin: 2px 0; }
+  .peca p { margin: 0; color: var(--suave); font-size: 13px; line-height: 1.4; }
+  .porque { color: var(--primaria); font-size: 13px; text-decoration: underline; cursor: pointer;
+            background: none; border: 0; padding: 0; margin-top: 6px; font: inherit; font-size: 13px; }
+  h2 { font-size: 17px; margin: 22px 0 8px; }
+  .alerta { background: var(--alerta-fundo); color: var(--alerta-texto); padding: 10px 14px;
+            border-radius: 6px; margin: 6px 0; display: flex; gap: 12px; justify-content: space-between;
+            align-items: flex-start; font-size: 14px; line-height: 1.45; }
+  .alerta .porque { color: var(--alerta-texto); white-space: nowrap; margin: 0; }
+  .dist { padding: 8px 14px; }
+  .dist div { display: grid; grid-template-columns: 120px 1fr 150px; align-items: center; gap: 10px;
+              padding: 4px 0; font-size: 14px; }
+  .barra { height: 10px; background: var(--borda); border-radius: 5px; }
+  .barra span { display: block; height: 100%; background: var(--primaria); border-radius: 5px; }
+  .dist em { color: var(--suave); font-style: normal; }
+  .fundo-modal { position: fixed; inset: 0; background: rgba(17, 24, 39, .45); display: none;
+                 align-items: center; justify-content: center; padding: 16px; }
+  .fundo-modal.ativa { display: flex; }
+  .modal { background: #fff; border-radius: 10px; max-width: 640px; width: 100%; padding: 20px 22px;
+           max-height: 90vh; overflow: auto; }
+  .modal h3 { margin: 0 0 12px; font-size: 18px; }
+  .passo { border-left: 3px solid var(--primaria); padding: 4px 0 4px 12px; margin: 10px 0; }
+  .passo b { color: var(--primaria); }
+  .passo p { margin: 3px 0 0; color: var(--suave); font-size: 14px; line-height: 1.45; }
+  .nav-proto { position: fixed; bottom: 12px; right: 12px; background: #111827; color: #fff;
+               font-size: 12px; padding: 6px 10px; border-radius: 6px; opacity: .8; }
+  .nav-proto a { color: #C7D2FE; margin: 0 3px; }
+</style>
+</head>
+<body>
+<div class="janela">
+  <div class="marca">🖥&nbsp; MONTA AÍ</div>
+
+  <!-- Tela 1: início -->
+  <section class="tela" id="t1">
+    <h1>Descubra o computador ideal para você</h1>
+    <p class="sub">Responda algumas perguntas rápidas. O sistema especialista analisa suas respostas com
+      54 regras e indica a configuração, os alertas e o porquê de cada escolha.</p>
+    <div class="cartao lista-intro">
+      <div>💰&nbsp; Seu orçamento</div>
+      <div>🎮&nbsp; Para que você vai usar</div>
+      <div>🖥&nbsp; Resolução do monitor</div>
+      <div>🔧&nbsp; Planos de upgrade</div>
+    </div>
+    <button class="botao" onclick="ir(2)">Começar &nbsp;→</button>
+  </section>
+
+  <!-- Tela 2: orçamento -->
+  <section class="tela" id="t2">
+    <h1>Quanto você pretende gastar, em reais?</h1>
+    <p class="sub">Pergunta 1 de 7</p>
+    <div class="progresso"><span style="width:14%"></span></div>
+    <div class="cartao campo"><span>R$</span><input value="6.000" aria-label="Orçamento"></div>
+    <p class="dica">Pode ser um valor aproximado. O sistema classifica em faixas (regras R01 a R04).</p>
+    <div class="linha-botoes">
+      <button class="botao sec" onclick="ir(1)">← Voltar</button>
+      <button class="botao" onclick="ir(3)">Próximo →</button>
+    </div>
+  </section>
+
+  <!-- Tela 3: uso principal -->
+  <section class="tela" id="t3">
+    <h1>Para que você vai usar o computador principalmente?</h1>
+    <p class="sub">Pergunta 3 de 7</p>
+    <div class="progresso"><span style="width:43%"></span></div>
+    <div class="grupo">
+      <button class="opcao">Estudo e escritório</button>
+      <button class="opcao">Programação</button>
+      <button class="opcao sel">Jogos</button>
+      <button class="opcao">Edição de vídeo</button>
+      <button class="opcao">IA e ciência de dados</button>
+    </div>
+    <div class="linha-botoes">
+      <button class="botao sec" onclick="ir(2)">← Voltar</button>
+      <button class="botao" onclick="ir(4)">Próximo →</button>
+    </div>
+  </section>
+
+  <!-- Tela 4: resolução -->
+  <section class="tela" id="t4">
+    <h1>Qual a resolução do monitor (ou da tela do notebook)?</h1>
+    <p class="sub">Pergunta 5 de 7</p>
+    <div class="progresso"><span style="width:71%"></span></div>
+    <div class="grupo">
+      <button class="opcao">1080p (Full HD)</button>
+      <button class="opcao sel">1440p (2K / Quad HD)</button>
+      <button class="opcao">4K</button>
+    </div>
+    <div class="linha-botoes">
+      <button class="botao sec" onclick="ir(3)">← Voltar</button>
+      <button class="botao" onclick="ir(5)">Ver recomendação →</button>
+    </div>
+  </section>
+
+  <!-- Tela 5: resultado -->
+  <section class="tela" id="t5">
+    <h1>Sua configuração recomendada</h1>
+    <p class="sub">Perfil: Gamer entusiasta &nbsp;•&nbsp; Orçamento 3 – alto (R$ 5 a 8 mil)</p>
+    <div class="grade">
+      <div class="cartao peca"><small>PROCESSADOR</small><b>Processador intermediário-alto</b>
+        <p>8 núcleos / 16 threads. Edição, lives e IA.</p><button class="porque" onclick="modal()">Por quê?</button></div>
+      <div class="cartao peca"><small>PLACA DE VÍDEO</small><b>Placa de vídeo intermediária-alta</b>
+        <p>12 a 16 GB de memória de vídeo. Jogos pesados em 1440p.</p><button class="porque" onclick="modal()">Por quê?</button></div>
+      <div class="cartao peca"><small>MEMÓRIA RAM</small><b>16 GB de RAM</b>
+        <p>2 pentes de 8 GB (dual channel).</p><button class="porque" onclick="modal()">Por quê?</button></div>
+      <div class="cartao peca"><small>ARMAZENAMENTO</small><b>SSD NVMe de 1 TB</b>
+        <p>Espaço para jogos e projetos.</p><button class="porque" onclick="modal()">Por quê?</button></div>
+      <div class="cartao peca"><small>PLACA-MÃE</small><b>4 slots de memória e 2 entradas M.2</b>
+        <p>Para ampliar depois.</p><button class="porque" onclick="modal()">Por quê?</button></div>
+      <div class="cartao peca"><small>FONTE</small><b>750 W, 80 Plus Gold</b>
+        <p>Com folga para upgrade.</p><button class="porque" onclick="modal()">Por quê?</button></div>
+    </div>
+    <h2>Alertas</h2>
+    <div class="alerta"><span>⚠ Seu orçamento está abaixo do ideal para a placa de vídeo que o seu uso pede.
+      Vai funcionar, mas com qualidade gráfica menor.</span><button class="porque" onclick="modal()">Por quê?</button></div>
+    <h2>Como dividir R$ 6.000,00</h2>
+    <div class="cartao dist" id="dist"></div>
+    <div class="linha-botoes">
+      <button class="botao sec" onclick="modal()">Ver regras disparadas</button>
+      <button class="botao" onclick="ir(1)">Nova consulta</button>
+    </div>
+  </section>
+</div>
+
+<!-- Tela 6: explicação (janela sobreposta) -->
+<div class="fundo-modal" id="modal" onclick="if (event.target === this) fechar()">
+  <div class="modal">
+    <h3>Por que placa de vídeo intermediária-alta?</h3>
+    <div class="passo"><b>R08</b> Quem joga jogos pesados tem perfil gamer entusiasta.
+      <p>porque uso principal = Jogos, tipo de jogo = Pesados → perfil = Gamer entusiasta</p></div>
+    <div class="passo"><b>R14</b> Gamer entusiasta precisa de placa de vídeo intermediária-alta.
+      <p>porque perfil = Gamer entusiasta → nível de placa de vídeo do perfil = 3</p></div>
+    <div class="passo"><b>R18</b> Monitor 1440p exige uma placa de vídeo um nível acima.
+      <p>porque resolução = 1440p → ajuste pela resolução = 1</p></div>
+    <div class="passo"><b>R23</b> Placa necessária = nível do perfil + ajuste.
+      <p>3 + 1 → placa de vídeo necessária = 4 (alta)</p></div>
+    <div class="passo"><b>R03 / R25</b> Orçamento de R$ 6.000 é faixa 3, que limita a placa ao nível 3.
+      <p>porque orçamento = R$ 6.000 e formato = desktop → teto de placa de vídeo = 3</p></div>
+    <div class="passo"><b>R28</b> Recomendada = a necessária, limitada pelo orçamento.
+      <p>menor entre 4 e 3 → placa de vídeo recomendada = 3 (intermediária-alta)</p></div>
+    <div class="linha-botoes"><span></span><button class="botao" onclick="fechar()">Fechar</button></div>
+  </div>
+</div>
+
+<div class="nav-proto">Protótipo · telas:
+  <a href="?tela=1">1</a><a href="?tela=2">2</a><a href="?tela=3">3</a><a href="?tela=4">4</a><a href="?tela=5">5</a><a href="?tela=6">6</a>
+</div>
+
+<script>
+  const dist = [["Placa de vídeo", 40], ["Processador", 20], ["Placa-mãe", 10], ["Memória RAM", 10],
+                ["SSD", 8], ["Fonte", 7], ["Gabinete", 5]];
+  document.getElementById("dist").innerHTML = dist.map(([p, pct]) =>
+    `<div><span>${p}</span><span class="barra"><span style="width:${pct * 2.5}%"></span></span>` +
+    `<em>${pct}% ≈ R$ ${(6000 * pct / 100).toLocaleString("pt-BR", {minimumFractionDigits: 2})}</em></div>`).join("");
+
+  document.querySelectorAll(".grupo").forEach(g => g.addEventListener("click", e => {
+    if (!e.target.classList.contains("opcao")) return;
+    g.querySelectorAll(".opcao").forEach(o => o.classList.remove("sel"));
+    e.target.classList.add("sel");
+  }));
+
+  function ir(n) {
+    document.querySelectorAll(".tela").forEach(t => t.classList.remove("ativa"));
+    document.getElementById("t" + n).classList.add("ativa");
+    window.scrollTo(0, 0);
+  }
+  function modal() { document.getElementById("modal").classList.add("ativa"); }
+  function fechar() { document.getElementById("modal").classList.remove("ativa"); }
+
+  const tela = Number(new URLSearchParams(location.search).get("tela")) || 1;
+  if (tela === 6) { ir(5); modal(); } else { ir(tela); }
+  if (new URLSearchParams(location.search).has("captura")) document.querySelector(".nav-proto").remove();
+</script>
+</body>
+</html>
