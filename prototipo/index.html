@@ -46,6 +46,9 @@
   .status { color: var(--suave); font-size: 13px; margin-top: 12px; }
   .rodape { color: var(--suave); font-size: 12px; margin-top: 36px; line-height: 1.5; }
   .rodape a { color: var(--primaria); }
+  .respostas { display: flex; flex-wrap: wrap; gap: 6px; margin: -6px 0 16px; }
+  .respostas span { background: var(--primaria-clara); color: var(--primaria-escura); border-radius: 12px;
+                    padding: 3px 10px; font-size: 13px; }
   .grade { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   @media (max-width: 560px) {
     .grade { grid-template-columns: 1fr; }
@@ -99,7 +102,7 @@
     <button class="botao" id="comecar" disabled>Carregando…</button>
     <p class="status" id="status">Carregando o motor de inferência em Python (pode levar alguns segundos na primeira vez)…</p>
     <p class="rodape">Este protótipo executa no navegador o mesmo código Python do sistema
-      (<a href="https://github.com/BrasDP/monta-ai">github.com/BrasDP/monta-ai</a>), por meio do Pyodide.</p>
+      (<a href="https://github.com/BrasDP/monta-ai">github.com/BrasDP/monta-ai</a>), por meio do Pyodide. Versão 2: o resultado é calculado a partir das suas respostas.</p>
   </section>
 
   <!-- Pergunta: montada a partir das perguntas do próprio sistema -->
@@ -119,6 +122,7 @@
   <section class="tela" id="resultado">
     <h1>Sua configuração recomendada</h1>
     <p class="sub" id="r-sub"></p>
+    <div class="respostas" id="r-respostas"></div>
     <div class="grade" id="r-pecas"></div>
     <div id="r-alertas"></div>
     <div id="r-dist"></div>
@@ -146,7 +150,7 @@
   const PONTE = [
     "import json",
     "from monta_ai.base_conhecimento import REGRAS",
-    "from monta_ai.catalogo import formatar_valor",
+    "from monta_ai.catalogo import PERGUNTAS, formatar_valor",
     "from monta_ai.sistema import perguntas_aplicaveis, recomendar",
     "",
     "def proxima(respostas_json):",
@@ -166,6 +170,8 @@
     "        'perfil': formatar_valor('perfil', f['perfil']),",
     "        'faixa': formatar_valor('faixa_orcamento', f['faixa_orcamento']),",
     "        'orcamento': f['orcamento'],",
+    "        'resumo': [{'streaming': 'Lives: ', 'upgrade': 'Upgrade: '}.get(p.atributo, '') +",
+    "                   formatar_valor(p.atributo, f[p.atributo]) for p in PERGUNTAS if p.atributo in r.respostas],",
     "        'pecas': [{'peca': peca, 'nome': nome, 'detalhe': detalhe, 'porque': r.explicar(fato)}",
     "                  for fato, peca, nome, detalhe in r.pecas()],",
     "        'alertas': [{'texto': a, 'porque': r.explicar_alerta(a)} for a in r.alertas],",
@@ -275,6 +281,7 @@
   function mostrarResultado() {
     const r = ultimoResultado = chamar("resultado", respostas);
     $("r-sub").innerHTML = "Perfil: " + esc(r.perfil) + " &nbsp;•&nbsp; Orçamento " + esc(r.faixa);
+    $("r-respostas").innerHTML = r.resumo.map(t => "<span>" + esc(t) + "</span>").join("");
     $("r-pecas").innerHTML = r.pecas.map((p, i) =>
       '<div class="cartao peca"><small>' + esc(p.peca.toUpperCase()) + "</small><b>" + esc(p.nome) + "</b>" +
       (p.detalhe ? "<p>" + esc(p.detalhe) + "</p>" : "") +
