@@ -5,101 +5,48 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Monta Aí: protótipo de telas</title>
 <style>
-  :root { --primaria: #4F46E5; --primaria-escura: #3730A3; --clara: #EEF0FF; --texto: #1E2139; --suave: #6B7091;
-           --fundo: #E7E9F4; --borda: #E3E5F0; --amarelo: #FFF4DB; --amarelo-texto: #8A4B08; --azul: #E6F4FF; --azul-texto: #0B4A7A; }
-  * { box-sizing: border-box; }
-  body { margin: 0; background: var(--fundo); color: var(--texto); font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif; }
-  main { padding: 40px 32px 56px; }
-  .titulo h1 { font-size: 30px; margin: 0 0 6px; }
-  .titulo p { margin: 0 0 36px; color: var(--suave); max-width: 900px; line-height: 1.5; }
-  .telas { display: flex; flex-wrap: wrap; gap: 36px; }
+  body { margin: 0; padding: 24px; background: #fff; color: #222; font-family: Arial, Helvetica, sans-serif; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .sub { margin: 0 0 20px; color: #555; font-size: 14px; }
+  .telas { display: grid; grid-template-columns: repeat(2, 520px); gap: 24px 28px; }
+  @media (max-width: 1120px) { .telas { grid-template-columns: 1fr; } }
   .tela { margin: 0; }
-  figcaption { font-weight: 700; color: var(--primaria-escura); margin: 0 0 10px 6px; }
-  .celular { width: 380px; height: 780px; background: #fff; border-radius: 44px; border: 10px solid #151833;
-              box-shadow: 0 24px 50px rgba(21, 24, 51, .25); position: relative; overflow: hidden; display: flex; flex-direction: column; }
-  .notch { width: 120px; height: 24px; background: #151833; border-radius: 0 0 16px 16px; margin: 0 auto; flex: none; }
-  .conteudo { flex: 1; padding: 18px 22px 8px; display: flex; flex-direction: column; gap: 14px; overflow: hidden; }
-  .marca { display: flex; align-items: center; gap: 8px; font-weight: 700; color: var(--primaria-escura); }
-  .logo { width: 30px; height: 30px; border-radius: 9px; background: linear-gradient(135deg, #6366F1, #4338CA);
-           color: #fff; display: grid; place-items: center; font-size: 16px; }
-  .progresso { height: 6px; background: var(--borda); border-radius: 3px; margin-top: 4px; }
-  .progresso span { display: block; height: 100%; background: linear-gradient(90deg, #6366F1, #4338CA); border-radius: 3px; }
-  .passo { margin: -6px 0 0; font-size: 13px; color: var(--suave); }
-  .hero { margin-top: 18px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; }
-  .ilustracao { width: 150px; height: 150px; border-radius: 50%; display: grid; place-items: center; font-size: 72px;
-                 background: radial-gradient(circle at 30% 30%, #EEF0FF, #C7CCFF); box-shadow: inset 0 0 0 10px #F5F6FF; }
-  .hero h1 { font-size: 26px; line-height: 1.2; margin: 8px 0 0; }
-  .hero p { margin: 0; color: var(--suave); line-height: 1.5; font-size: 15px; }
-  .chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 6px; }
-  .chips span { background: var(--clara); color: var(--primaria-escura); border-radius: 999px; padding: 6px 12px; font-size: 13px; font-weight: 600; }
-  h2 { font-size: 23px; line-height: 1.25; margin: 6px 0 2px; }
-  h2.menor { font-size: 19px; margin: 0; }
-  .opcoes { display: flex; flex-direction: column; gap: 10px; }
-  .opcao { display: flex; align-items: center; gap: 12px; padding: 14px 14px; border: 1.5px solid var(--borda); border-radius: 16px; font-size: 15.5px; }
-  .opcao .icone { width: 40px; height: 40px; border-radius: 12px; background: #F4F5FA; display: grid; place-items: center; font-size: 21px; flex: none; }
-  .opcao .radio { margin-left: auto; width: 20px; height: 20px; border-radius: 50%; border: 2px solid #C5C8DA; flex: none; }
-  .opcao.sel { border-color: var(--primaria); background: var(--clara); font-weight: 600; }
-  .opcao.sel .icone { background: #fff; }
-  .opcao.sel .radio { border: 6px solid var(--primaria); }
-  .rotulo { margin: 0; font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--primaria); }
-  .perfil { background: linear-gradient(135deg, #4F46E5, #3730A3); color: #fff; border-radius: 18px; padding: 14px 18px;
-             display: flex; justify-content: space-between; align-items: center; }
-  .perfil span { font-size: 13px; opacity: .85; }
-  .perfil b { font-size: 20px; }
-  .grade { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .peca { border: 1.5px solid var(--borda); border-radius: 16px; padding: 12px; display: flex; flex-direction: column; gap: 4px; }
-  .peca .icone { font-size: 22px; }
-  .peca small { color: var(--suave); font-size: 12px; font-weight: 600; }
-  .peca b { font-size: 14.5px; line-height: 1.3; }
-  .aviso, .dica { border-radius: 14px; padding: 11px 13px; font-size: 13.5px; line-height: 1.4; display: flex; gap: 8px; }
-  .aviso { background: var(--amarelo); color: var(--amarelo-texto); }
-  .dica { background: var(--azul); color: var(--azul-texto); }
-  .linha-tempo { display: flex; flex-direction: column; gap: 10px; position: relative; }
-  .regra { display: flex; gap: 12px; align-items: flex-start; }
-  .regra .id { flex: none; width: 46px; height: 30px; border-radius: 9px; background: var(--clara); color: var(--primaria-escura);
-               display: grid; place-items: center; font-weight: 700; font-size: 13px; font-family: Consolas, monospace; }
-  .regra p { margin: 0; font-size: 13px; line-height: 1.4; }
-  .regra .se { color: var(--suave); }
-  .regra .entao { font-weight: 600; }
-  .rodape { padding: 12px 22px 22px; display: flex; }
-  .rodape.duplo { gap: 10px; }
-  .botao { flex: 1; border: 0; border-radius: 14px; padding: 15px; font: inherit; font-weight: 700; font-size: 15.5px;
-            color: #fff; background: linear-gradient(135deg, #6366F1, #4338CA); box-shadow: 0 8px 18px rgba(79, 70, 229, .3); }
-  .botao.sec { flex: .8; background: #fff; color: var(--primaria-escura); border: 1.5px solid var(--borda); box-shadow: none; }
-  body.uma main { padding: 20px; }
-  body.uma .titulo, body.uma figcaption { display: none; }
+  figcaption { font-size: 14px; font-weight: bold; margin-bottom: 6px; }
+  .janela { width: 520px; max-width: 100%; height: 380px; border: 2px solid #555; background: #fafafa; display: flex; flex-direction: column; }
+  .titulo-janela { background: #ddd; border-bottom: 2px solid #555; padding: 5px 10px; font-size: 13px; font-weight: bold; }
+  .corpo { flex: 1; padding: 12px 16px; font-size: 14px; overflow: hidden; }
+  .corpo h2 { margin: 30px 0 10px; font-size: 26px; text-align: center; }
+  .corpo h3 { margin: 4px 0 10px; font-size: 16px; }
+  .corpo p { margin: 6px 0; line-height: 1.4; }
+  .corpo > p:not(.passo):not(.nota) { text-align: center; }
+  .passo { color: #666; font-size: 12px; }
+  .opcao { border: 1px solid #999; background: #fff; padding: 7px 10px; margin: 6px 0; display: flex; align-items: center; gap: 8px; }
+  .radio { width: 12px; height: 12px; border: 1px solid #555; border-radius: 50%; display: inline-block; }
+  .radio.marcado { background: #555; }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  td { border: 1px solid #999; padding: 4px 8px; background: #fff; }
+  td:first-child { width: 32%; font-weight: bold; }
+  .nota { font-size: 12.5px; border: 1px dashed #888; padding: 4px 8px; background: #fff; }
+  ol { margin: 0; padding-left: 18px; font-size: 12.5px; line-height: 1.45; }
+  li { margin-bottom: 4px; }
+  .botoes { padding: 10px 16px; border-top: 1px solid #bbb; display: flex; justify-content: flex-end; gap: 8px; }
+  .botao { border: 1px solid #333; background: #cfd8ff; padding: 5px 14px; font-size: 13px; }
+  .botao.sec { background: #eee; }
+  body.uma { padding: 10px; }
+  body.uma h1, body.uma .sub, body.uma figcaption { display: none; }
 </style>
 </head>
 <body>
-<main>
-  <div class="titulo">
-    <h1>Monta Aí: protótipo de telas</h1>
-    <p>Como o sistema especialista fica para o usuário: três perguntas, a recomendação e a explicação das regras
-    usadas. Exemplo com os dados reais do sistema: jogos, orçamento médio e notebook.</p>
-  </div>
-  <div class="telas">
-<figure class="tela" data-n="1"><figcaption>1 · Início</figcaption><div class="celular"><div class="notch"></div><div class="conteudo"><div class="marca"><span class="logo">M</span> Monta Aí</div>
-<div class="hero">
-  <div class="ilustracao">🖥️</div>
-  <h1>Descubra o computador ideal para você</h1>
-  <p>Responda 3 perguntas rápidas e o nosso sistema especialista indica as peças certas, explicando o porquê.</p>
+<h1>Monta Aí: protótipo de telas</h1>
+<p class="sub">Rascunho das telas do sistema. Exemplo: jogos, orçamento médio e notebook.</p>
+<div class="telas">
+<figure class="tela" data-n="1"><figcaption>1. Tela inicial</figcaption><div class="janela"><div class="titulo-janela">Monta Aí</div><div class="corpo"><h2>Monta Aí</h2><p>Sistema especialista que recomenda um computador para você.</p><p>Responda 3 perguntas e veja a recomendação e as regras usadas.</p></div><div class="botoes"><span class="botao">Começar</span></div></div></figure>
+<figure class="tela" data-n="2"><figcaption>2. Pergunta 1</figcaption><div class="janela"><div class="titulo-janela">Monta Aí</div><div class="corpo"><p class="passo">Pergunta 1 de 3</p><h3>Para que você vai usar o computador?</h3><div class="opcao"><span class="radio"></span>Estudo e escritório</div><div class="opcao"><span class="radio"></span>Programação</div><div class="opcao"><span class="radio marcado"></span>Jogos</div><div class="opcao"><span class="radio"></span>Edição de vídeo</div></div><div class="botoes"><span class="botao sec">Voltar</span><span class="botao">Próximo</span></div></div></figure>
+<figure class="tela" data-n="3"><figcaption>3. Pergunta 2</figcaption><div class="janela"><div class="titulo-janela">Monta Aí</div><div class="corpo"><p class="passo">Pergunta 2 de 3</p><h3>Quanto você pode gastar?</h3><div class="opcao"><span class="radio"></span>Até R$ 3.000</div><div class="opcao"><span class="radio marcado"></span>De R$ 3.000 a R$ 6.000</div><div class="opcao"><span class="radio"></span>Acima de R$ 6.000</div></div><div class="botoes"><span class="botao sec">Voltar</span><span class="botao">Próximo</span></div></div></figure>
+<figure class="tela" data-n="4"><figcaption>4. Pergunta 3</figcaption><div class="janela"><div class="titulo-janela">Monta Aí</div><div class="corpo"><p class="passo">Pergunta 3 de 3</p><h3>Você prefere desktop ou notebook?</h3><div class="opcao"><span class="radio"></span>Desktop (computador de mesa)</div><div class="opcao"><span class="radio marcado"></span>Notebook</div></div><div class="botoes"><span class="botao sec">Voltar</span><span class="botao">Ver resultado</span></div></div></figure>
+<figure class="tela" data-n="5"><figcaption>5. Recomendação</figcaption><div class="janela"><div class="titulo-janela">Monta Aí</div><div class="corpo"><h3>Recomendação</h3><table><tr><td>Perfil</td><td>gamer</td></tr><tr><td>Processador</td><td>intermediário (6 núcleos)</td></tr><tr><td>Memória RAM</td><td>16 GB</td></tr><tr><td>Placa de vídeo</td><td>placa intermediária</td></tr><tr><td>Armazenamento</td><td>SSD de 512 GB</td></tr></table><p class="nota">Atenção: Notebook com placa de vídeo esquenta: escolha um modelo com boa refrigeração.</p><p class="nota">Dica: No notebook não dá para trocar processador nem placa: compre pensando no futuro.</p></div><div class="botoes"><span class="botao sec">Nova consulta</span><span class="botao">Por quê?</span></div></div></figure>
+<figure class="tela" data-n="6"><figcaption>6. Por quê?</figcaption><div class="janela"><div class="titulo-janela">Monta Aí</div><div class="corpo"><h3>Por quê? Regras usadas</h3><ol><li><b>R3</b>: SE uso = jogos ENTÃO perfil = gamer</li><li><b>R7</b>: SE perfil = gamer ENTÃO processador = intermediário (6 núcleos) E memoria = 16 GB E video = dedicado</li><li><b>R10</b>: SE orcamento = médio ENTÃO armazenamento = SSD de 512 GB</li><li><b>R14</b>: SE video = dedicado E orcamento = médio ENTÃO placa_de_video = placa intermediária</li><li><b>R18</b>: SE formato = notebook E video = dedicado ENTÃO mostra aviso/dica</li><li><b>R19</b>: SE formato = notebook ENTÃO mostra aviso/dica</li></ol></div><div class="botoes"><span class="botao">Voltar</span></div></div></figure>
 </div>
-<div class="chips"><span>3 perguntas</span><span>20 regras</span><span>resposta explicada</span></div></div><div class="rodape"><button class="botao">Começar</button></div></div></figure>
-<figure class="tela" data-n="2"><figcaption>2 · Pergunta 1</figcaption><div class="celular"><div class="notch"></div><div class="conteudo"><div class="marca"><span class="logo">M</span> Monta Aí</div><div class="progresso"><span style="width:33%"></span></div><p class="passo">Pergunta 1 de 3</p><h2>Para que você vai usar o computador?</h2><div class="opcoes"><div class="opcao"><span class="icone">📚</span><span>Estudo e escritório</span><span class="radio"></span></div><div class="opcao"><span class="icone">👨‍💻</span><span>Programação</span><span class="radio"></span></div><div class="opcao sel"><span class="icone">🎮</span><span>Jogos</span><span class="radio"></span></div><div class="opcao"><span class="icone">🎬</span><span>Edição de vídeo</span><span class="radio"></span></div></div></div><div class="rodape duplo"><button class="botao sec">Voltar</button><button class="botao">Próximo</button></div></div></figure>
-<figure class="tela" data-n="3"><figcaption>3 · Pergunta 2</figcaption><div class="celular"><div class="notch"></div><div class="conteudo"><div class="marca"><span class="logo">M</span> Monta Aí</div><div class="progresso"><span style="width:67%"></span></div><p class="passo">Pergunta 2 de 3</p><h2>Quanto você pode gastar?</h2><div class="opcoes"><div class="opcao"><span class="icone">💵</span><span>Até R$ 3.000</span><span class="radio"></span></div><div class="opcao sel"><span class="icone">💰</span><span>De R$ 3.000 a R$ 6.000</span><span class="radio"></span></div><div class="opcao"><span class="icone">💎</span><span>Acima de R$ 6.000</span><span class="radio"></span></div></div></div><div class="rodape duplo"><button class="botao sec">Voltar</button><button class="botao">Próximo</button></div></div></figure>
-<figure class="tela" data-n="4"><figcaption>4 · Pergunta 3</figcaption><div class="celular"><div class="notch"></div><div class="conteudo"><div class="marca"><span class="logo">M</span> Monta Aí</div><div class="progresso"><span style="width:100%"></span></div><p class="passo">Pergunta 3 de 3</p><h2>Você prefere desktop ou notebook?</h2><div class="opcoes"><div class="opcao"><span class="icone">🖥️</span><span>Desktop (computador de mesa)</span><span class="radio"></span></div><div class="opcao sel"><span class="icone">💻</span><span>Notebook</span><span class="radio"></span></div></div></div><div class="rodape duplo"><button class="botao sec">Voltar</button><button class="botao">Ver recomendação</button></div></div></figure>
-<figure class="tela" data-n="5"><figcaption>5 · Recomendação</figcaption><div class="celular"><div class="notch"></div><div class="conteudo"><div class="marca"><span class="logo">M</span> Monta Aí</div>
-<p class="rotulo">Sua recomendação</p>
-<div class="perfil"><span>Perfil identificado</span><b>Gamer</b></div>
-<div class="grade"><div class="peca"><span class="icone">⚙️</span><small>Processador</small><b>Intermediário (6 núcleos)</b></div><div class="peca"><span class="icone">🧠</span><small>Memória RAM</small><b>16 GB</b></div><div class="peca"><span class="icone">🎮</span><small>Placa de vídeo</small><b>Placa intermediária</b></div><div class="peca"><span class="icone">💾</span><small>Armazenamento</small><b>SSD de 512 GB</b></div></div>
-<div class="aviso">⚠️ <span>Notebook com placa de vídeo esquenta: escolha um modelo com boa refrigeração.</span></div>
-<div class="dica">💡 <span>No notebook não dá para trocar processador nem placa: compre pensando no futuro.</span></div></div><div class="rodape duplo"><button class="botao sec">Nova consulta</button><button class="botao">Por quê?</button></div></div></figure>
-<figure class="tela" data-n="6"><figcaption>6 · Por quê?</figcaption><div class="celular"><div class="notch"></div><div class="conteudo"><div class="marca"><span class="logo">M</span> Monta Aí</div>
-<p class="rotulo">Por quê?</p>
-<h2 class="menor">Regras usadas, na ordem em que o motor aplicou</h2>
-<div class="linha-tempo"><div class="regra"><span class="id">R3</span><div><p class="se">SE uso = jogos</p><p class="entao">ENTÃO perfil = gamer</p></div></div><div class="regra"><span class="id">R7</span><div><p class="se">SE perfil = gamer</p><p class="entao">ENTÃO processador = intermediário (6 núcleos) E memoria = 16 GB E video = dedicado</p></div></div><div class="regra"><span class="id">R10</span><div><p class="se">SE orcamento = médio</p><p class="entao">ENTÃO armazenamento = SSD de 512 GB</p></div></div><div class="regra"><span class="id">R14</span><div><p class="se">SE video = dedicado E orcamento = médio</p><p class="entao">ENTÃO placa_de_video = placa intermediária</p></div></div><div class="regra"><span class="id">R18</span><div><p class="se">SE formato = notebook E video = dedicado</p><p class="entao">ENTÃO mostra um aviso</p></div></div><div class="regra"><span class="id">R19</span><div><p class="se">SE formato = notebook</p><p class="entao">ENTÃO mostra uma dica</p></div></div></div></div><div class="rodape"><button class="botao">Voltar ao resultado</button></div></div></figure>
-  </div>
-</main>
 <script>
   const n = new URLSearchParams(location.search).get("tela");
   if (n) {
