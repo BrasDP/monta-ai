@@ -1,20 +1,13 @@
 flowchart TD
-    A([Início]) --> B[/Usuário informa o orçamento/]
-    B --> C[/Usuário escolhe desktop ou notebook/]
-    C --> D[/Usuário informa o uso principal/]
-    D --> E{Uso = jogos?}
-    E -- Sim --> F[/Usuário informa o tipo de jogo/]
-    E -- Não --> G
-    F --> G[/Usuário informa resolução, lives e planos de upgrade/]
-    G --> H[(Base de fatos<br/>com as respostas)]
-    H --> I{Existe regra não disparada<br/>cujas condições são<br/>verdadeiras?}
-    I -- Sim --> J[Monta o conjunto de conflito<br/>e escolhe a regra de<br/>maior prioridade]
-    J --> K[Dispara a regra: adiciona as<br/>conclusões na base de fatos<br/>e registra no histórico]
-    K --> I
-    I -- Não --> N[/Exibe peças, alertas e<br/>divisão do orçamento/]
-    N --> O{Usuário pediu<br/>'Por quê?'}
-    O -- Sim --> P[Módulo de explicação percorre<br/>o histórico e mostra a cadeia<br/>de regras que levou ao fato]
-    P --> O
-    O -- Não --> Q{Nova consulta?}
-    Q -- Sim --> B
-    Q -- Não --> R([Fim])
+    A([Início]) --> B[/Pergunta 1: uso do computador/]
+    B --> C[/Pergunta 2: orçamento/]
+    C --> D[/Pergunta 3: desktop ou notebook/]
+    D --> E[(Base de fatos<br/>com as 3 respostas)]
+    E --> F{Existe regra nova com<br/>todas as condições<br/>verdadeiras?}
+    F -- Sim --> G[Dispara a regra:<br/>acrescenta os novos fatos]
+    G --> F
+    F -- Não --> H[/Mostra a recomendação<br/>e os avisos/]
+    H --> I[/Mostra as regras usadas<br/>explicação/]
+    I --> J{Nova consulta?}
+    J -- Sim --> B
+    J -- Não --> K([Fim])

@@ -5,352 +5,101 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Monta Aí: protótipo de telas</title>
 <style>
-  :root {
-    --fundo: #F4F6FB; --cartao: #FFFFFF; --primaria: #4F46E5; --primaria-escura: #3730A3;
-    --primaria-clara: #EEF2FF; --texto: #1F2937; --suave: #6B7280; --borda: #E5E7EB;
-    --alerta-fundo: #FEF3C7; --alerta-texto: #92400E;
-  }
-  * { box-sizing: border-box; }
-  body { margin: 0; background: var(--fundo); color: var(--texto);
-         font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif; }
-  .janela { max-width: 760px; margin: 0 auto; padding: 28px 32px 40px; min-height: 100vh; }
-  .marca { color: var(--primaria); font-weight: 700; letter-spacing: .5px; font-size: 14px; }
-  h1 { font-size: 26px; margin: 10px 0 4px; line-height: 1.25; }
-  .sub { color: var(--suave); margin: 0 0 18px; line-height: 1.5; }
-  .tela { display: none; }
-  .tela.ativa { display: block; }
-  .botao { display: inline-block; border: 1px solid var(--primaria); background: var(--primaria);
-           color: #fff; padding: 10px 20px; cursor: pointer; font: inherit;
-           font-weight: 700; border-radius: 6px; }
-  .botao:hover { background: var(--primaria-escura); }
-  .botao:disabled { opacity: .55; cursor: wait; }
-  .botao.sec { background: #fff; color: var(--primaria); }
-  .botao.sec:hover { background: var(--primaria-clara); }
-  .linha-botoes { display: flex; justify-content: space-between; margin-top: 22px; gap: 12px; }
-  .cartao { background: var(--cartao); border: 1px solid var(--borda); border-radius: 8px; }
-  .lista-intro { padding: 8px 18px; margin: 22px 0; }
-  .lista-intro div { padding: 8px 0; font-size: 16px; }
-  .progresso { height: 6px; background: var(--borda); border-radius: 3px; margin: 10px 0 20px; }
-  .progresso span { display: block; height: 100%; background: var(--primaria); border-radius: 3px;
-                    transition: width .25s; }
-  .opcao { display: block; width: 100%; text-align: left; padding: 14px 16px; margin: 8px 0;
-           font: inherit; font-size: 16px; background: #fff; border: 1px solid var(--borda);
-           border-radius: 8px; cursor: pointer; color: var(--texto); }
-  .opcao:hover { border-color: var(--primaria); }
-  .opcao.sel { background: var(--primaria-clara); border-color: var(--primaria); font-weight: 600; }
-  .campo { display: flex; align-items: center; padding: 6px 16px; }
-  .campo span { color: var(--suave); font-size: 20px; margin-right: 8px; }
-  .campo input { border: 0; font: inherit; font-size: 24px; padding: 10px 0; width: 100%; outline: none; }
-  .dica { color: var(--suave); font-size: 13px; margin-top: 8px; }
-  .erro { color: #B91C1C; font-size: 14px; min-height: 20px; margin: 8px 0 0; }
-  .status { color: var(--suave); font-size: 13px; margin-top: 12px; }
-  .rodape { color: var(--suave); font-size: 12px; margin-top: 36px; line-height: 1.5; }
-  .rodape a { color: var(--primaria); }
-  .respostas { display: flex; flex-wrap: wrap; gap: 6px; margin: -6px 0 16px; }
-  .respostas span { background: var(--primaria-clara); color: var(--primaria-escura); border-radius: 12px;
-                    padding: 3px 10px; font-size: 13px; }
-  .grade { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  @media (max-width: 560px) {
-    .grade { grid-template-columns: 1fr; }
-    .janela { padding: 20px 16px; }
-    .dist div { grid-template-columns: 100px 1fr !important; }
-    .dist em { grid-column: 1 / -1; }
-  }
-  .peca { padding: 12px 14px; }
-  .peca small { color: var(--suave); font-weight: 700; font-size: 11px; letter-spacing: .6px; }
-  .peca b { display: block; margin: 2px 0; }
-  .peca p { margin: 0; color: var(--suave); font-size: 13px; line-height: 1.4; }
-  .porque { color: var(--primaria); text-decoration: underline; cursor: pointer;
-            background: none; border: 0; padding: 0; margin-top: 6px; font: inherit; font-size: 13px; }
-  h2 { font-size: 17px; margin: 22px 0 8px; }
-  .alerta { background: var(--alerta-fundo); color: var(--alerta-texto); padding: 10px 14px;
-            border-radius: 6px; margin: 6px 0; display: flex; gap: 12px; justify-content: space-between;
-            align-items: flex-start; font-size: 14px; line-height: 1.45; }
-  .alerta .porque { color: var(--alerta-texto); white-space: nowrap; margin: 0; }
-  .dist { padding: 8px 14px; }
-  .dist div { display: grid; grid-template-columns: 120px 1fr 150px; align-items: center; gap: 10px;
-              padding: 4px 0; font-size: 14px; }
-  .barra { height: 10px; background: var(--borda); border-radius: 5px; }
-  .barra span { display: block; height: 100%; background: var(--primaria); border-radius: 5px; }
-  .dist em { color: var(--suave); font-style: normal; }
-  .fundo-modal { position: fixed; inset: 0; background: rgba(17, 24, 39, .45); display: none;
-                 align-items: center; justify-content: center; padding: 16px; }
-  .fundo-modal.ativa { display: flex; }
-  .modal { background: #fff; border-radius: 10px; max-width: 640px; width: 100%; padding: 20px 22px;
-           max-height: 90vh; overflow: auto; }
-  .modal h3 { margin: 0 0 12px; font-size: 18px; }
-  .passo { border-left: 3px solid var(--primaria); padding: 4px 0 4px 12px; margin: 10px 0; }
-  .passo b { color: var(--primaria); }
-  .passo p { margin: 3px 0 0; color: var(--suave); font-size: 14px; line-height: 1.45; }
+  body { margin: 0; padding: 40px; background: #E9EBF3; color: #1F2937;
+          font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif; }
+  h1 { font-size: 28px; margin: 0 0 6px; }
+  .sub { color: #4A5068; margin: 0 0 32px; line-height: 1.5; max-width: 900px; }
+  .telas { display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start; }
+  .janela { margin: 0; width: 820px; max-width: 100%; }
+  figcaption { font-weight: 700; color: #3730A3; margin-bottom: 8px; }
+  .terminal { background: #0F1226; border-radius: 10px; overflow: hidden; box-shadow: 0 10px 28px rgba(15,18,38,.25); }
+  .barra { background: #1E2240; padding: 10px 14px; display: flex; gap: 8px; align-items: center; }
+  .barra span { width: 12px; height: 12px; border-radius: 50%; background: #F87171; }
+  .barra span:nth-child(2) { background: #FBBF24; }
+  .barra span:nth-child(3) { background: #34D399; }
+  .barra em { color: #A5ACD4; font-style: normal; font-size: 13px; margin-left: 10px;
+               font-family: Consolas, "Courier New", monospace; }
+  pre { margin: 0; padding: 18px 20px 22px; color: #E6E8F5; font-size: 14px; line-height: 1.5;
+         font-family: Consolas, "Courier New", monospace; white-space: pre-wrap; }
+  .digitado { color: #FBBF24; }
 </style>
 </head>
 <body>
-<div class="janela">
-  <div class="marca">🖥&nbsp; MONTA AÍ</div>
+<h1>Monta Aí: protótipo de telas</h1>
+<p class="sub">O sistema roda no terminal. Estas são as telas reais do programa <b>monta_ai.py</b>, no exemplo de um
+usuário que quer um notebook para jogos com orçamento médio. Em amarelo, o que o usuário digitou.</p>
+<div class="telas">
+<figure class="janela">
+  <figcaption>Tela 1 · Início e pergunta 1</figcaption>
+  <div class="terminal">
+    <div class="barra"><span></span><span></span><span></span><em>python monta_ai.py</em></div>
+    <pre>============================================================
+  MONTA AÍ - Sistema especialista que recomenda computadores
+============================================================
+Responda 3 perguntas e eu indico o computador ideal para você.
 
-  <!-- Tela inicial -->
-  <section class="tela ativa" id="inicio">
-    <h1>Descubra o computador ideal para você</h1>
-    <p class="sub">Responda algumas perguntas rápidas. O sistema especialista analisa suas respostas com
-      <span id="qtd-regras">56</span> regras e indica a configuração, os alertas e o porquê de cada escolha.</p>
-    <div class="cartao lista-intro">
-      <div>💰&nbsp; Seu orçamento</div>
-      <div>🎮&nbsp; Para que você vai usar</div>
-      <div>🖥&nbsp; Resolução do monitor</div>
-      <div>🔧&nbsp; Planos de upgrade</div>
-    </div>
-    <button class="botao" id="comecar" disabled>Carregando…</button>
-    <p class="status" id="status">Carregando o motor de inferência em Python (pode levar alguns segundos na primeira vez)…</p>
-    <p class="rodape">Este protótipo executa no navegador o mesmo código Python do sistema
-      (<a href="https://github.com/BrasDP/monta-ai">github.com/BrasDP/monta-ai</a>), por meio do Pyodide. Versão 2: o resultado é calculado a partir das suas respostas.</p>
-  </section>
-
-  <!-- Pergunta: montada a partir das perguntas do próprio sistema -->
-  <section class="tela" id="pergunta">
-    <h1 id="p-texto"></h1>
-    <p class="sub" id="p-contador"></p>
-    <div class="progresso"><span id="p-barra"></span></div>
-    <div id="p-resposta"></div>
-    <p class="erro" id="p-erro"></p>
-    <div class="linha-botoes">
-      <button class="botao sec" id="voltar">← Voltar</button>
-      <button class="botao" id="proximo">Próximo →</button>
-    </div>
-  </section>
-
-  <!-- Resultado -->
-  <section class="tela" id="resultado">
-    <h1>Sua configuração recomendada</h1>
-    <p class="sub" id="r-sub"></p>
-    <div class="respostas" id="r-respostas"></div>
-    <div class="grade" id="r-pecas"></div>
-    <div id="r-alertas"></div>
-    <div id="r-dist"></div>
-    <div class="linha-botoes">
-      <button class="botao sec" id="ver-regras">Ver regras disparadas</button>
-      <button class="botao" id="nova">Nova consulta</button>
-    </div>
-  </section>
-</div>
-
-<!-- Explicação -->
-<div class="fundo-modal" id="modal">
-  <div class="modal">
-    <h3 id="m-titulo"></h3>
-    <div id="m-corpo"></div>
-    <div class="linha-botoes"><span></span><button class="botao" id="fechar">Fechar</button></div>
+Pergunta 1 de 3: Para que você vai usar o computador?
+  1) Estudo e escritório
+  2) Programação
+  3) Jogos
+  4) Edição de vídeo
+Escolha uma opção: <b class="digitado">3</b></pre>
   </div>
+</figure>
+<figure class="janela">
+  <figcaption>Tela 2 · Perguntas 2 e 3 (com opção inválida)</figcaption>
+  <div class="terminal">
+    <div class="barra"><span></span><span></span><span></span><em>python monta_ai.py</em></div>
+    <pre>Pergunta 2 de 3: Quanto você pode gastar?
+  1) Até R$ 3.000
+  2) De R$ 3.000 a R$ 6.000
+  3) Acima de R$ 6.000
+Escolha uma opção: <b class="digitado">5</b>
+Opção inválida. Digite um número de 1 a 3.
+Escolha uma opção: <b class="digitado">2</b>
+
+Pergunta 3 de 3: Você prefere desktop ou notebook?
+  1) Desktop (computador de mesa)
+  2) Notebook
+Escolha uma opção: <b class="digitado">2</b></pre>
+  </div>
+</figure>
+<figure class="janela">
+  <figcaption>Tela 3 · Recomendação</figcaption>
+  <div class="terminal">
+    <div class="barra"><span></span><span></span><span></span><em>python monta_ai.py</em></div>
+    <pre>------------------------------------------------------------
+  RECOMENDAÇÃO
+------------------------------------------------------------
+  Perfil identificado: gamer
+  Processador:         intermediário (6 núcleos)
+  Memória RAM:         16 GB
+  Placa de vídeo:      placa intermediária
+  Armazenamento:       SSD de 512 GB
+
+  ATENÇÃO: Notebook com placa de vídeo esquenta: escolha um modelo com boa refrigeração.
+
+  DICA: No notebook não dá para trocar processador nem placa: compre pensando no futuro.</pre>
+  </div>
+</figure>
+<figure class="janela">
+  <figcaption>Tela 4 · Explicação (por quê?)</figcaption>
+  <div class="terminal">
+    <div class="barra"><span></span><span></span><span></span><em>python monta_ai.py</em></div>
+    <pre>------------------------------------------------------------
+  POR QUÊ? Regras usadas, na ordem em que o motor aplicou:
+------------------------------------------------------------
+  R3: SE uso = jogos ENTÃO perfil = gamer
+  R7: SE perfil = gamer ENTÃO processador = intermediário (6 núcleos) E memoria = 16 GB E video = dedicado
+  R10: SE orcamento = médio ENTÃO armazenamento = SSD de 512 GB
+  R14: SE video = dedicado E orcamento = médio ENTÃO placa_de_video = placa intermediária
+  R18: SE formato = notebook E video = dedicado ENTÃO aviso_notebook = Notebook com placa de vídeo esquenta: escolha um modelo com boa refrigeração.
+  R19: SE formato = notebook ENTÃO dica = No notebook não dá para trocar processador nem placa: compre pensando no futuro.
+
+Deseja fazer uma nova consulta? (s/n): <b class="digitado">n</b>
+Até mais!</pre>
+  </div>
+</figure>
 </div>
-
-<script src="https://cdn.jsdelivr.net/pyodide/v0.27.7/full/pyodide.js"></script>
-<script>
-  const ARQUIVOS = ["__init__.py", "motor.py", "base_conhecimento.py", "catalogo.py", "sistema.py"];
-
-  // Ponte entre a página e o sistema especialista em Python.
-  const PONTE = [
-    "import json",
-    "from monta_ai.base_conhecimento import REGRAS",
-    "from monta_ai.catalogo import PERGUNTAS, formatar_valor",
-    "from monta_ai.sistema import perguntas_aplicaveis, recomendar",
-    "",
-    "def proxima(respostas_json):",
-    "    respostas = json.loads(respostas_json)",
-    "    todas = list(perguntas_aplicaveis(respostas))",
-    "    pendentes = [p for p in todas if p.atributo not in respostas]",
-    "    if not pendentes:",
-    "        return json.dumps(None)",
-    "    p = pendentes[0]",
-    "    return json.dumps({'atributo': p.atributo, 'texto': p.texto, 'opcoes': p.opcoes,",
-    "                       'numero': len(todas) - len(pendentes) + 1, 'total': len(todas)})",
-    "",
-    "def resultado(respostas_json):",
-    "    r = recomendar(json.loads(respostas_json))",
-    "    f = r.fatos",
-    "    return json.dumps({",
-    "        'perfil': formatar_valor('perfil', f['perfil']),",
-    "        'faixa': formatar_valor('faixa_orcamento', f['faixa_orcamento']),",
-    "        'orcamento': f['orcamento'],",
-    "        'resumo': [{'streaming': 'Lives: ', 'upgrade': 'Upgrade: '}.get(p.atributo, '') +",
-    "                   formatar_valor(p.atributo, f[p.atributo]) for p in PERGUNTAS if p.atributo in r.respostas],",
-    "        'pecas': [{'peca': peca, 'nome': nome, 'detalhe': detalhe, 'porque': r.explicar(fato)}",
-    "                  for fato, peca, nome, detalhe in r.pecas()],",
-    "        'alertas': [{'texto': a, 'porque': r.explicar_alerta(a)} for a in r.alertas],",
-    "        'distribuicao': r.distribuicao_em_reais(),",
-    "        'rastro': [rid + ': ' + desc for rid, desc in r.rastro()],",
-    "    })",
-    "",
-    "QTD_REGRAS = len(REGRAS)",
-  ].join("\n");
-
-  let py = null;
-  let respostas = {};
-  let historico = [];
-  let perguntaAtual = null;
-  let ultimoResultado = null;
-
-  const $ = id => document.getElementById(id);
-  const moeda = v => "R$ " + v.toLocaleString("pt-BR", {minimumFractionDigits: 2, maximumFractionDigits: 2});
-  const esc = t => String(t).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
-
-  function mostrar(id) {
-    document.querySelectorAll(".tela").forEach(t => t.classList.remove("ativa"));
-    $(id).classList.add("ativa");
-    window.scrollTo(0, 0);
-  }
-
-  async function iniciar() {
-    try {
-      py = await loadPyodide();
-      py.FS.mkdirTree("/home/pyodide/monta_ai");
-      for (const nome of ARQUIVOS) {
-        const resposta = await fetch("../monta_ai/" + nome, {cache: "no-cache"});
-        if (!resposta.ok) throw new Error("não encontrei " + nome);
-        py.FS.writeFile("/home/pyodide/monta_ai/" + nome, await resposta.text());
-      }
-      py.runPython("import sys; sys.path.insert(0, '/home/pyodide')");
-      py.runPython(PONTE);
-      $("qtd-regras").textContent = py.globals.get("QTD_REGRAS");
-      $("comecar").disabled = false;
-      $("comecar").textContent = "Começar  →";
-      $("status").textContent = "";
-    } catch (e) {
-      $("status").textContent = "Não foi possível carregar o sistema (" + e.message +
-        "). Verifique a conexão com a internet e recarregue a página.";
-      $("comecar").textContent = "Indisponível";
-    }
-  }
-
-  function chamar(funcao, dados) {
-    return JSON.parse(py.globals.get(funcao)(JSON.stringify(dados)));
-  }
-
-  function proximaPergunta() {
-    perguntaAtual = chamar("proxima", respostas);
-    if (!perguntaAtual) return mostrarResultado();
-    const p = perguntaAtual;
-    $("p-texto").textContent = p.texto;
-    $("p-contador").textContent = "Pergunta " + p.numero + " de " + p.total;
-    $("p-barra").style.width = (100 * p.numero / p.total) + "%";
-    $("p-erro").textContent = "";
-    const anterior = respostas[p.atributo];
-    if (p.opcoes.length) {
-      $("p-resposta").innerHTML = p.opcoes.map(([valor, rotulo]) =>
-        '<button class="opcao' + (valor === anterior ? " sel" : "") + '" data-valor="' + esc(valor) + '">' +
-        esc(rotulo) + "</button>").join("");
-    } else {
-      $("p-resposta").innerHTML =
-        '<div class="cartao campo"><span>R$</span><input id="valor" inputmode="decimal" ' +
-        'placeholder="Ex.: 4.500" aria-label="Orçamento em reais" value="' +
-        (anterior ? anterior.toLocaleString("pt-BR") : "") + '"></div>' +
-        '<p class="dica">Pode ser um valor aproximado. O sistema classifica em faixas (regras R01 a R04).</p>';
-      $("valor").focus();
-    }
-    mostrar("pergunta");
-  }
-
-  function lerResposta() {
-    if (perguntaAtual.opcoes.length) {
-      const sel = $("p-resposta").querySelector(".opcao.sel");
-      return sel ? sel.dataset.valor : null;
-    }
-    const bruto = $("valor").value.trim().replace(/\./g, "").replace(",", ".");
-    const valor = Number(bruto);
-    return bruto && valor > 0 ? valor : null;
-  }
-
-  function avancar() {
-    const valor = lerResposta();
-    if (valor === null) {
-      $("p-erro").textContent = perguntaAtual.opcoes.length ? "Escolha uma opção para continuar."
-                                                            : "Digite o valor, por exemplo 4500.";
-      return;
-    }
-    respostas[perguntaAtual.atributo] = valor;
-    historico.push(perguntaAtual.atributo);
-    // Se o uso mudar para algo que não é jogo, a resposta sobre o tipo de jogo deixa de valer.
-    if (perguntaAtual.atributo === "uso" && valor !== "jogos") delete respostas.tipo_jogo;
-    proximaPergunta();
-  }
-
-  function voltar() {
-    if (!historico.length) return mostrar("inicio");
-    delete respostas[historico.pop()];
-    proximaPergunta();
-  }
-
-  function mostrarResultado() {
-    const r = ultimoResultado = chamar("resultado", respostas);
-    $("r-sub").innerHTML = "Perfil: " + esc(r.perfil) + " &nbsp;•&nbsp; Orçamento " + esc(r.faixa);
-    $("r-respostas").innerHTML = r.resumo.map(t => "<span>" + esc(t) + "</span>").join("");
-    $("r-pecas").innerHTML = r.pecas.map((p, i) =>
-      '<div class="cartao peca"><small>' + esc(p.peca.toUpperCase()) + "</small><b>" + esc(p.nome) + "</b>" +
-      (p.detalhe ? "<p>" + esc(p.detalhe) + "</p>" : "") +
-      '<button class="porque" data-tipo="peca" data-i="' + i + '">Por quê?</button></div>').join("");
-    $("r-alertas").innerHTML = r.alertas.length ? "<h2>Alertas</h2>" + r.alertas.map((a, i) =>
-      '<div class="alerta"><span>⚠ ' + esc(a.texto) + "</span>" +
-      '<button class="porque" data-tipo="alerta" data-i="' + i + '">Por quê?</button></div>').join("") : "";
-    $("r-dist").innerHTML = r.distribuicao.length ?
-      "<h2>Como dividir " + moeda(r.orcamento) + '</h2><div class="cartao dist">' +
-      r.distribuicao.map(([peca, pct, valor]) =>
-        "<div><span>" + esc(peca) + '</span><span class="barra"><span style="width:' +
-        Math.min(100, pct * 2.5) + '%"></span></span><em>' + pct + "% ≈ " + moeda(valor) + "</em></div>"
-      ).join("") + "</div>" : "";
-    mostrar("resultado");
-  }
-
-  function abrirModal(titulo, html) {
-    $("m-titulo").textContent = titulo;
-    $("m-corpo").innerHTML = html;
-    $("modal").classList.add("ativa");
-  }
-
-  function passo(linha, detalhe) {
-    const partes = linha.split(": ");
-    return '<div class="passo"><b>' + esc(partes[0]) + "</b> " + esc(partes.slice(1).join(": ")) +
-      (detalhe ? "<p>" + esc(detalhe) + "</p>" : "") + "</div>";
-  }
-
-  function abrirExplicacao(titulo, linhas) {
-    let html = "";
-    linhas.forEach((linha, i) => {
-      if (linha.startsWith(" ")) return;
-      const seguinte = linhas[i + 1];
-      html += passo(linha, seguinte && seguinte.startsWith(" ") ? seguinte.trim() : "");
-    });
-    abrirModal(titulo, html);
-  }
-
-  $("comecar").onclick = () => { respostas = {}; historico = []; proximaPergunta(); };
-  $("proximo").onclick = avancar;
-  $("voltar").onclick = voltar;
-  $("nova").onclick = () => mostrar("inicio");
-  $("fechar").onclick = () => $("modal").classList.remove("ativa");
-  $("modal").onclick = e => { if (e.target === $("modal")) $("modal").classList.remove("ativa"); };
-  $("p-resposta").onclick = e => {
-    const opcao = e.target.closest(".opcao");
-    if (!opcao) return;
-    $("p-resposta").querySelectorAll(".opcao").forEach(o => o.classList.remove("sel"));
-    opcao.classList.add("sel");
-  };
-  $("p-resposta").ondblclick = e => { if (e.target.closest(".opcao")) avancar(); };
-  document.addEventListener("keydown", e => {
-    if (e.key === "Enter" && $("pergunta").classList.contains("ativa")) avancar();
-    if (e.key === "Escape") $("modal").classList.remove("ativa");
-  });
-  $("r-pecas").onclick = $("r-alertas").onclick = e => {
-    const b = e.target.closest(".porque");
-    if (!b) return;
-    if (b.dataset.tipo === "peca") {
-      const p = ultimoResultado.pecas[b.dataset.i];
-      abrirExplicacao("Por que " + p.peca.toLowerCase() + ": " + p.nome + "?", p.porque);
-    } else {
-      abrirExplicacao("Por que este alerta?", ultimoResultado.alertas[b.dataset.i].porque);
-    }
-  };
-  $("ver-regras").onclick = () => abrirModal("Regras disparadas (encadeamento para frente)",
-    ultimoResultado.rastro.map(l => passo(l, "")).join(""));
-
-  iniciar();
-</script>
 </body>
 </html>
