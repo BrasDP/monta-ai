@@ -106,6 +106,9 @@ Os fontes estão em `docs/diagramas/` (Mermaid e SVG).
 
 **Abrir o protótipo:** https://brasdp.github.io/monta-ai/prototipo/
 
+**Todas as telas lado a lado** (para importar no Figma com o plugin html.to.design):
+https://brasdp.github.io/monta-ai/prototipo/telas.html
+
 O protótipo roda no navegador o mesmo código Python do sistema (via [Pyodide](https://pyodide.org)),
 então cada combinação de respostas gera a sua própria recomendação. O código do protótipo está em
 [`prototipo/index.html`](prototipo/index.html).
