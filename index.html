@@ -5,74 +5,156 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Monta Aí: sistema especialista</title>
 <style>
-  :root {
-    --fundo: #E9EBF3; --texto: #1F2937; --suave: #4A5068; --primaria: #4F46E5;
-    --terminal: #0F1226; --barra: #1E2240; --letra: #E6E8F5; --digitado: #FBBF24; --erro: #F87171;
-  }
+  :root { --primaria: #4F46E5; --escura: #3730A3; --clara: #EEF0FF; --texto: #1E2139; --suave: #6B7091;
+          --borda: #E3E5F0; --fundo: #E9EBF4; }
   * { box-sizing: border-box; }
-  body { margin: 0; background: var(--fundo); color: var(--texto);
+  body { margin: 0; min-height: 100vh; background: var(--fundo); color: var(--texto); display: flex;
+         align-items: center; justify-content: center; padding: 24px 16px;
          font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif; }
-  main { max-width: 920px; margin: 0 auto; padding: 32px 16px 48px; }
-  h1 { font-size: 28px; margin: 0 0 6px; }
-  .sub { color: var(--suave); margin: 0 0 20px; line-height: 1.5; }
-  .sub a { color: var(--primaria); }
-  .terminal { background: var(--terminal); border-radius: 10px; overflow: hidden;
-              box-shadow: 0 10px 28px rgba(15, 18, 38, .25); }
-  .barra { background: var(--barra); padding: 10px 14px; display: flex; gap: 8px; align-items: center; }
-  .barra span { width: 12px; height: 12px; border-radius: 50%; background: #F87171; }
-  .barra span:nth-child(2) { background: #FBBF24; }
-  .barra span:nth-child(3) { background: #34D399; }
-  .barra em { color: #A5ACD4; font-style: normal; font-size: 13px; margin-left: 10px;
-              font-family: Consolas, "Courier New", monospace; }
-  .tela { height: 560px; overflow-y: auto; padding: 16px 20px; cursor: text; }
-  pre, .linha-entrada { margin: 0; color: var(--letra); font-size: 14px; line-height: 1.5;
-                        font-family: Consolas, "Courier New", monospace; white-space: pre-wrap; word-break: break-word; }
-  .digitado { color: var(--digitado); }
-  .linha-entrada { display: flex; }
-  .linha-entrada input { flex: 1; background: transparent; border: 0; outline: none; color: var(--digitado);
-                         font: inherit; padding: 0; caret-color: var(--digitado); }
-  .oculto { display: none; }
-  .acoes { margin-top: 14px; display: flex; gap: 10px; flex-wrap: wrap; }
-  .botao { border: 1px solid var(--primaria); background: var(--primaria); color: #fff; padding: 9px 16px;
-           border-radius: 6px; font: inherit; font-weight: 600; cursor: pointer; }
-  .botao.sec { background: #fff; color: var(--primaria); }
-  @media (max-width: 560px) { .tela { height: 480px; } pre, .linha-entrada { font-size: 13px; } }
+  .moldura { width: 100%; max-width: 720px; }
+  .janela { width: 100%; max-width: 720px; min-height: 540px; background: #fff; border-radius: 14px; overflow: hidden;
+            box-shadow: 0 14px 34px rgba(21, 24, 51, .16); display: flex; flex-direction: column; }
+  .barra { background: #F1F2F7; border-bottom: 1px solid var(--borda); padding: 9px 14px; display: flex; gap: 6px; align-items: center; }
+  .barra i { width: 11px; height: 11px; border-radius: 50%; background: #F87171; }
+  .barra i:nth-child(2) { background: #FBBF24; }
+  .barra i:nth-child(3) { background: #34D399; }
+  .barra span { margin-left: 8px; font-size: 12px; color: var(--suave); }
+  .cabecalho { display: flex; align-items: center; gap: 8px; padding: 14px 24px 0; color: var(--escura); flex-wrap: wrap; }
+  .logo { width: 28px; height: 28px; border-radius: 8px; background: var(--primaria); color: #fff;
+          display: grid; place-items: center; font-size: 15px; font-weight: 700; }
+  .progresso-area { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+  .progresso { width: 160px; height: 6px; background: var(--borda); border-radius: 3px; }
+  .progresso span { display: block; height: 100%; background: var(--primaria); border-radius: 3px; transition: width .3s; }
+  .passo { font-size: 12.5px; color: var(--suave); }
+  .conteudo { flex: 1; padding: 14px 24px; display: flex; flex-direction: column; gap: 12px; }
+  .tela { display: none; flex: 1; flex-direction: column; gap: 12px; }
+  .tela.ativa { display: flex; }
+  .hero { flex: 1; display: flex; align-items: center; gap: 28px; }
+  .ilustracao { flex: none; width: 160px; height: 160px; border-radius: 50%; display: grid; place-items: center;
+                font-size: 76px; background: radial-gradient(circle at 30% 30%, #EEF0FF, #C7CCFF); }
+  .hero h1 { font-size: 28px; line-height: 1.2; margin: 0 0 8px; }
+  .hero p { margin: 0 0 12px; color: var(--suave); line-height: 1.5; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chips span { background: var(--clara); color: var(--escura); border-radius: 999px; padding: 5px 11px; font-size: 13px; font-weight: 600; }
+  .status { color: var(--suave); font-size: 13px; margin: 8px 0 0; }
+  h2 { font-size: 22px; line-height: 1.25; margin: 2px 0; }
+  .opcoes { display: flex; flex-direction: column; gap: 9px; }
+  .opcao { display: flex; align-items: center; gap: 12px; padding: 11px 14px; border: 1.5px solid var(--borda); border-radius: 12px;
+           font: inherit; font-size: 15.5px; background: #fff; color: var(--texto); text-align: left; cursor: pointer; width: 100%; }
+  .opcao:hover { border-color: #A5ACF5; }
+  .opcao .icone { width: 38px; height: 38px; border-radius: 10px; background: #F4F5FA; display: grid; place-items: center; font-size: 20px; flex: none; }
+  .opcao .radio { margin-left: auto; width: 18px; height: 18px; border-radius: 50%; border: 2px solid #C5C8DA; flex: none; }
+  .opcao.sel { border-color: var(--primaria); background: var(--clara); font-weight: 600; }
+  .opcao.sel .icone { background: #fff; }
+  .opcao.sel .radio { border: 5px solid var(--primaria); }
+  .perfil { background: var(--primaria); color: #fff; border-radius: 12px; padding: 12px 18px; display: flex;
+            justify-content: space-between; align-items: center; gap: 12px; }
+  .perfil span { font-size: 13px; opacity: .85; }
+  .perfil b { font-size: 20px; }
+  .grade { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+  .peca { border: 1.5px solid var(--borda); border-radius: 12px; padding: 10px 12px; display: flex; gap: 10px; align-items: center; }
+  .peca .icone { font-size: 24px; }
+  .peca small { display: block; color: var(--suave); font-size: 12px; font-weight: 600; }
+  .peca b { font-size: 15px; }
+  .aviso, .dica { border-radius: 10px; padding: 9px 12px; font-size: 14px; line-height: 1.4; display: flex; gap: 8px; }
+  .aviso { background: #FFF4DB; color: #8A4B08; }
+  .dica { background: #E6F4FF; color: #0B4A7A; }
+  .regras { display: flex; flex-direction: column; gap: 9px; }
+  .regra { display: flex; gap: 10px; align-items: flex-start; }
+  .regra .id { flex: none; width: 46px; padding: 3px 0; border-radius: 7px; background: var(--clara); color: var(--escura);
+               text-align: center; font-weight: 700; font-size: 13px; font-family: Consolas, monospace; }
+  .regra p { margin: 0; font-size: 14px; line-height: 1.45; }
+  .regra .se { color: var(--suave); }
+  .rodape { padding: 12px 24px 20px; display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap; }
+  .botao { border: 0; border-radius: 10px; padding: 11px 22px; font: inherit; font-weight: 700; font-size: 15px;
+           color: #fff; background: var(--primaria); cursor: pointer; }
+  .botao:hover { background: var(--escura); }
+  .botao:disabled { opacity: .45; cursor: not-allowed; }
+  .botao.sec { background: #fff; color: var(--escura); border: 1.5px solid var(--borda); }
+  .botao.sec:hover { background: var(--clara); }
+  .oculto { display: none !important; }
+  .links { margin-top: 14px; text-align: center; font-size: 13px; color: var(--suave); }
+  .links a { color: var(--escura); }
+  @media (max-width: 560px) {
+    body { padding: 0; align-items: stretch; }
+    .moldura { max-width: none; }
+    .janela { border-radius: 0; min-height: 100vh; }
+    .barra { display: none; }
+    .conteudo, .cabecalho { padding-left: 16px; padding-right: 16px; }
+    .rodape { padding: 12px 16px 18px; }
+    .rodape .botao { flex: 1; }
+    .hero { flex-direction: column; text-align: center; gap: 16px; }
+    .hero .chips { justify-content: center; }
+    .ilustracao { width: 120px; height: 120px; font-size: 56px; }
+    .hero h1 { font-size: 24px; }
+    .grade { grid-template-columns: 1fr; }
+    .progresso { width: 90px; }
+    .links { display: none; }
+  }
 </style>
 </head>
 <body>
-<main>
-  <h1>Monta Aí: sistema especialista que recomenda computadores</h1>
-  <p class="sub">Digite o número da opção e aperte Enter, como no terminal. As regras, o motor de inferência e a
-    explicação vêm do arquivo <a href="https://github.com/BrasDP/monta-ai/blob/main/monta_ai.py">monta_ai.py</a>,
-    executado aqui no navegador.</p>
-
-  <div class="terminal">
-    <div class="barra"><span></span><span></span><span></span><em>python monta_ai.py</em></div>
-    <div class="tela" id="tela">
-      <pre id="saida">Carregando o Python no navegador (pode levar alguns segundos na primeira vez)...</pre>
-      <label class="linha-entrada oculto" id="linha">
-        <span id="prompt"></span><input id="entrada" autocomplete="off" spellcheck="false" aria-label="Resposta">
-      </label>
+<div class="moldura">
+<div class="janela">
+  <div class="barra"><i></i><i></i><i></i><span>Monta Aí</span></div>
+  <div class="cabecalho">
+    <span class="logo">M</span><b>Monta Aí</b>
+    <div class="progresso-area oculto" id="progresso-area">
+      <div class="progresso"><span id="progresso"></span></div><span class="passo" id="passo"></span>
     </div>
   </div>
-  <div class="acoes">
-    <button class="botao sec" id="reiniciar">Reiniciar o programa</button>
+
+  <div class="conteudo">
+    <!-- Início -->
+    <section class="tela ativa" id="tela-inicio">
+      <div class="hero">
+        <div class="ilustracao">🖥️</div>
+        <div>
+          <h1>Descubra o computador ideal para você</h1>
+          <p>Responda 3 perguntas rápidas e o sistema especialista indica as peças certas, explicando o porquê.</p>
+          <div class="chips"><span>3 perguntas</span><span id="qtd-regras">20 regras</span><span>resposta explicada</span></div>
+          <p class="status" id="status">Carregando o sistema...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pergunta (montada a partir das perguntas do monta_ai.py) -->
+    <section class="tela" id="tela-pergunta">
+      <h2 id="pergunta-texto"></h2>
+      <div class="opcoes" id="opcoes"></div>
+    </section>
+
+    <!-- Recomendação -->
+    <section class="tela" id="tela-resultado">
+      <div class="perfil"><span>Perfil identificado</span><b id="perfil"></b></div>
+      <div class="grade" id="pecas"></div>
+      <div id="avisos"></div>
+    </section>
+
+    <!-- Por quê? -->
+    <section class="tela" id="tela-porque">
+      <h2>Por quê? Regras usadas, na ordem em que o motor aplicou</h2>
+      <div class="regras" id="regras"></div>
+    </section>
   </div>
-</main>
+
+  <div class="rodape">
+    <button class="botao sec oculto" id="btn-voltar">Voltar</button>
+    <button class="botao sec oculto" id="btn-nova">Nova consulta</button>
+    <button class="botao" id="btn-principal" disabled>Começar</button>
+  </div>
+</div>
+<p class="links">Código: <a href="https://github.com/BrasDP/monta-ai">github.com/BrasDP/monta-ai</a> ·
+  <a href="terminal.html">versão terminal</a></p>
+</div>
 
 <script src="https://cdn.jsdelivr.net/pyodide/v0.27.7/full/pyodide.js"></script>
 <script>
-  // Funções em Python que usam o próprio monta_ai.py e devolvem o texto que ele imprimiria.
+  // Ponte com o monta_ai.py: as perguntas, o motor de inferência e as regras vêm de lá.
   const PONTE = [
-    "import io, json, contextlib, sys",
+    "import json, sys",
     "sys.path.insert(0, '/home/pyodide')",
     "import monta_ai",
-    "",
-    "def capturar(funcao, *args):",
-    "    buffer = io.StringIO()",
-    "    with contextlib.redirect_stdout(buffer):",
-    "        funcao(*args)",
-    "    return buffer.getvalue()",
     "",
     "def perguntas():",
     "    return json.dumps(monta_ai.PERGUNTAS, ensure_ascii=False)",
@@ -80,86 +162,100 @@
     "def consultar(fatos_json):",
     "    fatos = json.loads(fatos_json)",
     "    usadas = monta_ai.motor_de_inferencia(fatos)",
-    "    return capturar(monta_ai.mostrar_recomendacao, fatos) + capturar(monta_ai.mostrar_explicacao, usadas)",
+    "    por_id = {r['id']: r for r in monta_ai.REGRAS}",
+    "    return json.dumps({'fatos': fatos, 'regras': [por_id[i] for i in usadas]}, ensure_ascii=False)",
+    "",
+    "QTD_REGRAS = len(monta_ai.REGRAS)",
   ].join("\n");
 
+  const ICONES = {"estudo": "📚", "programação": "👨‍💻", "jogos": "🎮", "edição de vídeo": "🎬",
+                  "baixo": "💵", "médio": "💰", "alto": "💎", "desktop": "🖥️", "notebook": "💻"};
   const $ = id => document.getElementById(id);
-  let py, PERGUNTAS, fatos, indice, estado;
+  const esc = t => String(t).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+  const maiuscula = t => t.charAt(0).toUpperCase() + t.slice(1);
 
-  function escrever(texto, classe) {
-    const span = document.createElement("span");
-    if (classe) span.className = classe;
-    span.textContent = texto;
-    $("saida").appendChild(span);
-    $("tela").scrollTop = $("tela").scrollHeight;
+  let py, PERGUNTAS, respostas = {}, indice = 0, tela = "inicio";
+
+  function mostrar(nome) {
+    tela = nome;
+    document.querySelectorAll(".tela").forEach(t => t.classList.remove("ativa"));
+    $("tela-" + nome).classList.add("ativa");
+    $("progresso-area").classList.toggle("oculto", nome !== "pergunta");
+    $("btn-voltar").classList.toggle("oculto", !["pergunta", "porque"].includes(nome));
+    $("btn-nova").classList.toggle("oculto", !["resultado", "porque"].includes(nome));
+    const principal = {inicio: "Começar", resultado: "Por quê?", porque: "Nova consulta"}[nome];
+    $("btn-principal").classList.toggle("oculto", nome === "porque");
+    if (nome === "porque") $("btn-voltar").textContent = "Voltar ao resultado";
+    if (principal) $("btn-principal").textContent = principal;
+    $("btn-principal").disabled = nome === "inicio" && !py;
   }
 
-  function pedir(prompt) {
-    $("prompt").textContent = prompt;
-    $("linha").classList.remove("oculto");
-    $("entrada").value = "";
-    $("entrada").focus();
-    $("tela").scrollTop = $("tela").scrollHeight;
-  }
-
-  // Mesmo texto que a função perguntar() mostra no terminal.
   function mostrarPergunta() {
     const p = PERGUNTAS[indice];
-    escrever(`\nPergunta ${indice + 1} de ${PERGUNTAS.length}: ${p.texto}\n`);
-    p.opcoes.forEach(([, rotulo], i) => escrever(`  ${i + 1}) ${rotulo}\n`));
-    estado = "pergunta";
-    pedir("Escolha uma opção: ");
+    $("pergunta-texto").textContent = p.texto;
+    $("progresso").style.width = ((indice + 1) / PERGUNTAS.length * 100) + "%";
+    $("passo").textContent = `Pergunta ${indice + 1} de ${PERGUNTAS.length}`;
+    $("opcoes").innerHTML = p.opcoes.map(([valor, rotulo]) =>
+      `<button class="opcao${respostas[p.fato] === valor ? " sel" : ""}" data-valor="${esc(valor)}">` +
+      `<span class="icone">${ICONES[valor] || "•"}</span><span>${esc(rotulo)}</span><span class="radio"></span></button>`).join("");
+    mostrar("pergunta");
+    $("btn-voltar").textContent = "Voltar";
+    $("btn-principal").textContent = indice === PERGUNTAS.length - 1 ? "Ver recomendação" : "Próximo";
+    $("btn-principal").disabled = !(p.fato in respostas);
+  }
+
+  function mostrarResultado() {
+    const {fatos, regras} = JSON.parse(py.globals.get("consultar")(JSON.stringify(respostas)));
+    $("perfil").textContent = maiuscula(fatos.perfil);
+    const pecas = [["⚙️", "Processador", fatos.processador], ["🧠", "Memória RAM", fatos.memoria],
+                   ["🎮", "Placa de vídeo", fatos.placa_de_video], ["💾", "Armazenamento", fatos.armazenamento]];
+    $("pecas").innerHTML = pecas.map(([i, t, v]) =>
+      `<div class="peca"><span class="icone">${i}</span><div><small>${t}</small><b>${esc(maiuscula(v))}</b></div></div>`).join("");
+    $("avisos").innerHTML =
+      ["aviso_orcamento", "aviso_notebook"].filter(k => fatos[k])
+        .map(k => `<div class="aviso">⚠️ <span>${esc(fatos[k])}</span></div>`).join("") +
+      `<div class="dica" style="margin-top:9px">💡 <span>${esc(fatos.dica)}</span></div>`;
+    const texto = obj => Object.entries(obj).map(([k, v]) => `${k} = ${v}`).join(" E ");
+    const entao = r => {
+      const partes = Object.entries(r.entao).filter(([k]) => !k.startsWith("aviso") && !k.startsWith("dica"));
+      return partes.length ? texto(Object.fromEntries(partes)) : "mostra um aviso ou uma dica";
+    };
+    $("regras").innerHTML = regras.map(r =>
+      `<div class="regra"><span class="id">${r.id}</span><p><span class="se">SE ${esc(texto(r.se))}</span> ` +
+      `<b>ENTÃO ${esc(entao(r))}</b></p></div>`).join("");
+    mostrar("resultado");
   }
 
   function novaConsulta() {
-    fatos = {};
+    respostas = {};
     indice = 0;
     mostrarPergunta();
   }
 
-  function iniciarPrograma() {
-    $("saida").textContent = "";
-    escrever("=".repeat(60) + "\n");
-    escrever("  MONTA AÍ - Sistema especialista que recomenda computadores\n");
-    escrever("=".repeat(60) + "\n");
-    escrever("Responda 3 perguntas e eu indico o computador ideal para você.\n");
-    novaConsulta();
-  }
-
-  function responder(valor) {
-    escrever($("prompt").textContent);
-    escrever(valor + "\n", "digitado");
-    $("linha").classList.add("oculto");
-
-    if (estado === "pergunta") {
-      const p = PERGUNTAS[indice];
-      const n = Number(valor.trim());
-      if (!/^\d+$/.test(valor.trim()) || n < 1 || n > p.opcoes.length) {
-        escrever(`Opção inválida. Digite um número de 1 a ${p.opcoes.length}.\n`);
-        return pedir("Escolha uma opção: ");
-      }
-      fatos[p.fato] = p.opcoes[n - 1][0];
-      indice++;
-      if (indice < PERGUNTAS.length) return mostrarPergunta();
-      // As 3 respostas estão na base de fatos: o motor de inferência do monta_ai.py faz o resto.
-      escrever(py.globals.get("consultar")(JSON.stringify(fatos)));
-      estado = "de_novo";
-      return pedir("\nDeseja fazer uma nova consulta? (s/n): ");
-    }
-
-    if (estado === "de_novo") {
-      if (valor.trim().toLowerCase() === "s") return novaConsulta();
-      escrever("Até mais!\n");
-      estado = "fim";
-      escrever("\n[programa encerrado: clique em \"Reiniciar o programa\" para rodar de novo]\n", "digitado");
-    }
-  }
-
-  $("entrada").addEventListener("keydown", e => {
-    if (e.key === "Enter") responder($("entrada").value);
+  $("opcoes").addEventListener("click", e => {
+    const opcao = e.target.closest(".opcao");
+    if (!opcao) return;
+    respostas[PERGUNTAS[indice].fato] = opcao.dataset.valor;
+    document.querySelectorAll(".opcao").forEach(o => o.classList.toggle("sel", o === opcao));
+    $("btn-principal").disabled = false;
   });
-  $("tela").addEventListener("click", () => { if (!$("linha").classList.contains("oculto")) $("entrada").focus(); });
-  $("reiniciar").addEventListener("click", () => { if (py) iniciarPrograma(); });
+
+  $("btn-principal").addEventListener("click", () => {
+    if (tela === "inicio") return novaConsulta();
+    if (tela === "pergunta") {
+      if (indice < PERGUNTAS.length - 1) { indice++; return mostrarPergunta(); }
+      return mostrarResultado();
+    }
+    if (tela === "resultado") return mostrar("porque");
+  });
+
+  $("btn-voltar").addEventListener("click", () => {
+    if (tela === "porque") return mostrar("resultado");
+    if (indice > 0) { indice--; return mostrarPergunta(); }
+    mostrar("inicio");
+  });
+
+  $("btn-nova").addEventListener("click", novaConsulta);
 
   (async () => {
     try {
@@ -169,10 +265,13 @@
       py.FS.writeFile("/home/pyodide/monta_ai.py", await resposta.text());
       py.runPython(PONTE);
       PERGUNTAS = JSON.parse(py.globals.get("perguntas")());
-      iniciarPrograma();
+      $("qtd-regras").textContent = py.globals.get("QTD_REGRAS") + " regras";
+      $("status").classList.add("oculto");
+      if (tela === "inicio") $("btn-principal").disabled = false;
     } catch (erro) {
-      $("saida").textContent = "Não foi possível carregar o programa: " + erro.message +
-        "\nVerifique a conexão com a internet e recarregue a página.";
+      py = null;
+      $("status").textContent = "Não foi possível carregar o sistema: " + erro.message +
+        ". Verifique a internet e recarregue a página.";
     }
   })();
 </script>

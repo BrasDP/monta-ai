@@ -15,7 +15,8 @@ com avisos e dicas. No final, mostra quais regras usou para chegar à resposta.
 
 ## Como executar
 
-**Rodar no navegador (sem instalar nada):** https://brasdp.github.io/monta-ai/
+**Usar no navegador (sem instalar nada):** https://brasdp.github.io/monta-ai/
+(também há uma versão com cara de terminal: https://brasdp.github.io/monta-ai/terminal.html)
 
 Precisa apenas do Python 3, sem nenhuma biblioteca extra:
 
